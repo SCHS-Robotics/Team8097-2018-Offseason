@@ -27,7 +27,7 @@ public class TeleOp extends BaseOpMode {
 
             // Controls checking
             if(Math.abs(gamepad1.left_stick_y) >= 0.05) {
-                drive.swerveyDrive(gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
+                drive.curveDrive(gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
             }
 
             else if (gamepad1.left_trigger > .1){

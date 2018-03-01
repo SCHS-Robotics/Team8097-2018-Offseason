@@ -14,6 +14,7 @@ public class Drive {
     Drive(ArrayList<DcMotor> leftMotors, ArrayList<DcMotor> rightMotors) {
         this.leftMotors = leftMotors;
         this.rightMotors = rightMotors;
+        allMotors = new ArrayList<>();
         allMotors.addAll(leftMotors);
         allMotors.addAll(rightMotors);
 
@@ -38,7 +39,7 @@ public class Drive {
         }
     }
 
-    void swerveyDrive(double magnitude, double inputLeft, double inputRight) {
+    void curveDrive(double magnitude, double inputLeft, double inputRight) {
         double curve = -inputLeft + inputRight;
         double leftPower, rightPower;
         double power = speed(magnitude);
@@ -47,8 +48,8 @@ public class Drive {
         {
             double value = Math.log(-curve);
             double ratio = (value - 0.5)/(value + 0.5);
-            leftPower = -power/ratio;
-            rightPower = power;
+            leftPower = power/ratio;
+            rightPower = -power;
         }
         else if (curve > 0.0)
         {

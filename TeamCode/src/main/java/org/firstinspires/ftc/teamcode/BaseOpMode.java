@@ -17,7 +17,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     ElapsedTime runtime;
 
-    public void initialize() {
+    void initialize() {
 
         runtime = new ElapsedTime();
 
