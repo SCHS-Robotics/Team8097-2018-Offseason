@@ -4,39 +4,36 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.ArrayList;
+
 public abstract class BaseOpMode extends LinearOpMode {
 
     // Declare hardware variables here
+    DcMotor motorLeft;
+    DcMotor motorRight;
+    Drive drive;
+    ArrayList<DcMotor> leftMotors;
+    ArrayList<DcMotor> rightMotors;
 
     ElapsedTime runtime;
 
     public void initialize() {
 
         runtime = new ElapsedTime();
-        // Hardware that should be used in any OpMode. Things like motors, servos can all go here.
+
+        motorLeft = hardwareMap.dcMotor.get("motorLeft");
+        motorRight = hardwareMap.dcMotor.get("motorRight");
+
+        leftMotors.add(motorLeft);
+        rightMotors.add(motorRight);
+
+        drive = new Drive(leftMotors, rightMotors);
 
         switch (type) {
             case TELEOP:
                 // Put any TeleOp-only hardware requirements here;
             case AUTONOMOUS:
                 // Put any Autonomous-only hardware requirements here (Mostly sensors);
-        }
-    }
-
-    // Couple of useful functions
-    void resetEncoders(DcMotor...motors) {
-        for(DcMotor motor : motors){
-            if(motor.getCurrentPosition() != 0){
-                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-    }
-
-    void stopMotors(DcMotor...motors) {
-        for(DcMotor motor : motors){
-            motor.setPower(0);
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
