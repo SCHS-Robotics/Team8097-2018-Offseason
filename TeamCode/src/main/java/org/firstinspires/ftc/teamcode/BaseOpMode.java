@@ -12,8 +12,8 @@ public abstract class BaseOpMode extends LinearOpMode {
     DcMotor motorLeft;
     DcMotor motorRight;
     Drive drive;
-    ArrayList<DcMotor> leftMotors;
-    ArrayList<DcMotor> rightMotors;
+    private ArrayList<DcMotor> leftMotors;
+    private ArrayList<DcMotor> rightMotors;
 
     ElapsedTime runtime;
 
@@ -24,8 +24,11 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorLeft = hardwareMap.dcMotor.get("motorLeft");
         motorRight = hardwareMap.dcMotor.get("motorRight");
 
+        leftMotors = new ArrayList<>();
+        rightMotors = new ArrayList<>();
         leftMotors.add(motorLeft);
         rightMotors.add(motorRight);
+
 
         drive = new Drive(leftMotors, rightMotors);
 

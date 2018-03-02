@@ -40,7 +40,7 @@ public class Drive {
     }
 
     void curveDrive(double magnitude, double inputLeft, double inputRight) {
-        double curve = -inputLeft + inputRight;
+        double curve = inputLeft - inputRight;
         double leftPower, rightPower;
         double power = speed(magnitude);
 
@@ -48,15 +48,15 @@ public class Drive {
         {
             double value = Math.log(-curve);
             double ratio = (value - 0.5)/(value + 0.5);
-            leftPower = power/ratio;
-            rightPower = -power;
+            leftPower = magnitude/ratio;
+            rightPower = -magnitude;
         }
         else if (curve > 0.0)
         {
             double value = Math.log(curve);
             double ratio = (value - 0.5)/(value + 0.5);
-            leftPower = power;
-            rightPower = -power/ratio;
+            leftPower = magnitude;
+            rightPower = -magnitude/ratio;
         }
         else
         {
@@ -110,10 +110,21 @@ public class Drive {
     private double speed(double target) {
         double power;
 
-        if(currentMeanSpeed() < target){
-            power = currentMeanSpeed() + 0.05;
-        } else {
-            power = target;
+        if(target < 0) {
+            if (currentMeanSpeed() > target) {
+                power = currentMeanSpeed() - 0.05;
+            }
+            else {
+                power = target;
+            }
+        }
+        else{
+            if (currentMeanSpeed() < target) {
+                power = currentMeanSpeed() + 0.05;
+            }
+            else {
+                power = target;
+            }
         }
 
         return power;
