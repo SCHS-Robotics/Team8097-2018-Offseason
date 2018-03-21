@@ -18,36 +18,43 @@ public class Drive {
         allMotors.addAll(leftMotors);
         allMotors.addAll(rightMotors);
 
+        for (DcMotor motor : allMotors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+
         resetEncoders(allMotors);
     }
 
     void goForward(double targetPower) {
         for(DcMotor motor : leftMotors) {
-            motor.setPower(speed(targetPower));
+            motor.setPower(targetPower);
         }
         for (DcMotor motor : rightMotors) {
-            motor.setPower(-speed(targetPower));
+            motor.setPower(-targetPower);
         }
     }
 
     void goBackward(double targetPower) {
         for(DcMotor motor : leftMotors) {
-            motor.setPower(-speed(targetPower));
+            motor.setPower(-targetPower);
         }
         for (DcMotor motor : rightMotors) {
-            motor.setPower(speed(targetPower));
+            motor.setPower(targetPower);
         }
     }
 
     void curveDrive(double magnitude, double inputLeft, double inputRight) {
         double curve = inputLeft - inputRight;
         double leftPower, rightPower;
-        double power = speed(magnitude);
 
         if (curve < 0.0)
         {
             double value = Math.log(-curve);
             double ratio = (value - 0.5)/(value + 0.5);
+            if (ratio == 0.0)
+            {
+                ratio = 0.0000000001;
+            }
             leftPower = magnitude/ratio;
             rightPower = -magnitude;
         }
@@ -55,13 +62,17 @@ public class Drive {
         {
             double value = Math.log(curve);
             double ratio = (value - 0.5)/(value + 0.5);
+            if (ratio == 0.0)
+            {
+                ratio = 0.0000000001;
+            }
             leftPower = magnitude;
             rightPower = -magnitude/ratio;
         }
         else
         {
-            leftPower = power;
-            rightPower = -power;
+            leftPower = magnitude;
+            rightPower = -magnitude;
         }
 
         for(DcMotor motor : leftMotors) {
@@ -70,17 +81,18 @@ public class Drive {
         for (DcMotor motor : rightMotors) {
             motor.setPower(rightPower);
         }
+
     }
 
     void turnLeft(double targetPower) {
         for(DcMotor motor : allMotors) {
-            motor.setPower(speed(targetPower));
+            motor.setPower(targetPower);
         }
     }
 
     void turnRight(double targetPower) {
         for(DcMotor motor : allMotors) {
-            motor.setPower(-speed(targetPower));
+            motor.setPower(-targetPower);
         }
     }
 
@@ -107,40 +119,7 @@ public class Drive {
         }
     }
 
-    private double speed(double target) {
-        double power;
-
-        if(target < 0) {
-            if (currentMeanSpeed() > target) {
-                power = currentMeanSpeed() - 0.05;
-            }
-            else {
-                power = target;
-            }
-        }
-        else{
-            if (currentMeanSpeed() < target) {
-                power = currentMeanSpeed() + 0.05;
-            }
-            else {
-                power = target;
-            }
-        }
-
-        return power;
-    }
-
-    private double currentMeanSpeed() {
-        double leftTotal = 0;
-        double rightTotal = 0;
-
-        for(DcMotor motor: leftMotors) {
-            leftTotal += motor.getPower();
-        }
-        for (DcMotor motor: rightMotors) {
-            rightTotal += motor.getPower();
-        }
-
-        return (leftTotal + rightTotal) / (leftMotors.size() + rightMotors.size());
+    double currentMeanSpeed() {
+        return ((rightMotors.get(0).getPower() + leftMotors.get(0).getPower()) / 2) * 10;
     }
 }

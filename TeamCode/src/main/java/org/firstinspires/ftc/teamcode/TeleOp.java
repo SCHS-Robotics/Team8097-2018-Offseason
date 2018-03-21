@@ -24,18 +24,22 @@ public class TeleOp extends BaseOpMode {
             // Telemetry
             telemetry.update();
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Motor speed", drive.currentMeanSpeed());
+            telemetry.addData("Motor Left speed", motorLeft.getPower());
+            telemetry.addData("Motor Right speed", motorRight.getPower());
+
 
             // Controls checking
-            if(Math.abs(gamepad1.left_stick_y) >= 0.05) {
-                drive.curveDrive(gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
+            if(Math.abs(gamepad1.left_stick_y) > 0) {
+                drive.curveDrive(gamepad1.left_stick_y / 10, gamepad1.left_trigger, gamepad1.right_trigger);
             }
 
             else if (gamepad1.left_trigger > .1){
-                drive.turnLeft(gamepad1.left_trigger);
+                drive.turnLeft(gamepad1.left_trigger / 10);
             }
 
             else if (gamepad1.right_trigger > .1){
-                drive.turnRight(gamepad1.right_trigger);
+                drive.turnRight(gamepad1.right_trigger / 10);
             }
 
             else {
