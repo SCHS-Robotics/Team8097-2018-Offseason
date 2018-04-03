@@ -7,22 +7,12 @@ import java.util.ArrayList;
 // Simple Drive system for the two stupid FRC motors, should be adaptable for a non-mecanum/omni drive of any sort though
 public class Drive {
 
-    private ArrayList<DcMotor> leftMotors;
-    private ArrayList<DcMotor> rightMotors;
-    private ArrayList<DcMotor> allMotors;
+    ArrayList<DcMotor> allMotors;
+    ArrayList<DcMotor> leftMotors;
+    ArrayList<DcMotor> rightMotors;
 
-    Drive(ArrayList<DcMotor> leftMotors, ArrayList<DcMotor> rightMotors) {
-        this.leftMotors = leftMotors;
-        this.rightMotors = rightMotors;
-        allMotors = new ArrayList<>();
-        allMotors.addAll(leftMotors);
-        allMotors.addAll(rightMotors);
+    Drive () {
 
-        for (DcMotor motor : allMotors) {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }
-
-        resetEncoders(allMotors);
     }
 
     void goForward(double targetPower) {
@@ -105,6 +95,12 @@ public class Drive {
         }
     }
 
+    void setMode(ArrayList<DcMotor> motors, DcMotor.RunMode mode) {
+        for(DcMotor motor : motors) {
+            motor.setMode(mode);
+        }
+    }
+
     void stopMotors(ArrayList<DcMotor> motors) {
         for(DcMotor motor : motors) {
             motor.setPower(0);
@@ -117,9 +113,5 @@ public class Drive {
             motor.setPower(0);
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-    }
-
-    double currentMeanSpeed() {
-        return ((rightMotors.get(0).getPower() + leftMotors.get(0).getPower()) / 2) * 10;
     }
 }

@@ -30,7 +30,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         rightMotors.add(motorRight);
 
 
-        drive = new Drive(leftMotors, rightMotors);
+        drive = new TankDrive(leftMotors, rightMotors);
 
         switch (type) {
             case TELEOP:
