@@ -1,45 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
 
-// Simple Drive system for the two stupid FRC motors, should be adaptable for a non-mecanum/omni drive of any sort though
 public class Drive {
 
-    private ArrayList<DcMotor> leftMotors;
-    private ArrayList<DcMotor> rightMotors;
-    private ArrayList<DcMotor> allMotors;
+    final float SPEED_INCREMENT = 0.05f;
+    final float SPEED_TOLERANCE = 0.05f;
+    final float CURVE_SENSITIVITY = 0.5f;
 
-    Drive(ArrayList<DcMotor> leftMotors, ArrayList<DcMotor> rightMotors) {
-        this.leftMotors = leftMotors;
-        this.rightMotors = rightMotors;
-        allMotors = new ArrayList<>();
-        allMotors.addAll(leftMotors);
-        allMotors.addAll(rightMotors);
+    ArrayList<DcMotor> allMotors;
+    ArrayList<DcMotor> leftMotors;
+    ArrayList<DcMotor> rightMotors;
 
-        for (DcMotor motor : allMotors) {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }
+    Drive () {
 
-        resetEncoders(allMotors);
     }
 
     void goForward(double targetPower) {
-        for(DcMotor motor : leftMotors) {
-            motor.setPower(targetPower);
-        }
-        for (DcMotor motor : rightMotors) {
-            motor.setPower(-targetPower);
+        for(DcMotor motor : allMotors) {
+            motor.setPower(speed(targetPower));
         }
     }
 
     void goBackward(double targetPower) {
-        for(DcMotor motor : leftMotors) {
-            motor.setPower(-targetPower);
-        }
-        for (DcMotor motor : rightMotors) {
-            motor.setPower(targetPower);
+        for(DcMotor motor : allMotors) {
+            motor.setPower(-speed(targetPower));
         }
     }
 
@@ -50,29 +38,29 @@ public class Drive {
         if (curve < 0.0)
         {
             double value = Math.log(-curve);
-            double ratio = (value - 0.5)/(value + 0.5);
+            double ratio = (value - CURVE_SENSITIVITY)/(value + CURVE_SENSITIVITY);
             if (ratio == 0.0)
             {
                 ratio = 0.0000000001;
             }
-            leftPower = magnitude/ratio;
-            rightPower = -magnitude;
+            leftPower = speed(magnitude)/ratio;
+            rightPower = speed(magnitude);
         }
         else if (curve > 0.0)
         {
             double value = Math.log(curve);
-            double ratio = (value - 0.5)/(value + 0.5);
+            double ratio = (value - CURVE_SENSITIVITY)/(value + CURVE_SENSITIVITY);
             if (ratio == 0.0)
             {
                 ratio = 0.0000000001;
             }
-            leftPower = magnitude;
-            rightPower = -magnitude/ratio;
+            leftPower = speed(magnitude);
+            rightPower = speed(magnitude)/ratio;
         }
         else
         {
-            leftPower = magnitude;
-            rightPower = -magnitude;
+            leftPower = speed(magnitude);
+            rightPower = speed(magnitude);
         }
 
         for(DcMotor motor : leftMotors) {
@@ -85,14 +73,20 @@ public class Drive {
     }
 
     void turnLeft(double targetPower) {
-        for(DcMotor motor : allMotors) {
-            motor.setPower(targetPower);
+        for(DcMotor motor : leftMotors) {
+            motor.setPower(-speed(targetPower));
+        }
+        for(DcMotor motor : rightMotors) {
+            motor.setPower(speed(targetPower));
         }
     }
 
     void turnRight(double targetPower) {
-        for(DcMotor motor : allMotors) {
-            motor.setPower(-targetPower);
+        for(DcMotor motor : leftMotors) {
+            motor.setPower(speed(targetPower));
+        }
+        for(DcMotor motor : rightMotors) {
+            motor.setPower(-speed(targetPower));
         }
     }
 
@@ -105,21 +99,76 @@ public class Drive {
         }
     }
 
+    void setMode(ArrayList<DcMotor> motors, DcMotor.RunMode mode) {
+        for(DcMotor motor : motors) motor.setMode(mode);
+    }
+
+    void setPower(ArrayList<DcMotor> motors, double power) {
+        for (DcMotor motor : motors) motor.setPower(power);
+    }
+
+    void setTarget(ArrayList<DcMotor> motors, int targetPosition) {
+        for (DcMotor motor : motors) motor.setTargetPosition(targetPosition);
+    }
+
+    void setDirection(ArrayList<DcMotor> motors, DcMotor.Direction direction) {
+        for (DcMotor motor : motors) motor.setDirection(direction);
+    }
+
     void stopMotors(ArrayList<DcMotor> motors) {
         for(DcMotor motor : motors) {
-            motor.setPower(0);
+            motor.setPower(speed(0));
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
     void stopAll() {
         for(DcMotor motor : allMotors) {
-            motor.setPower(0);
+            motor.setPower(speed(0));
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
+    double speed(double target) {
+        double power;
+
+        if(target < 0) {
+            if (currentMeanSpeed() > target + SPEED_TOLERANCE) {
+                power = currentMeanSpeed() - SPEED_INCREMENT;
+            } else if (currentMeanSpeed() < target - SPEED_TOLERANCE){
+                power = currentMeanSpeed() + SPEED_INCREMENT;
+            } else {
+                power = target;
+            }
+        }
+
+        else {
+            if (currentMeanSpeed() < target - SPEED_TOLERANCE) {
+                power = currentMeanSpeed() + SPEED_INCREMENT;
+            }
+            else if (currentMeanSpeed() > target + SPEED_TOLERANCE){
+                power = currentMeanSpeed() - SPEED_INCREMENT;
+            } else {
+                power = target;
+            }
+        }
+
+        return power;
+    }
+
     double currentMeanSpeed() {
-        return ((rightMotors.get(0).getPower() + leftMotors.get(0).getPower()) / 2) * 10;
+        double leftTotal = 0;
+        double rightTotal = 0;
+        double average;
+        int totalMotors;
+
+        for (DcMotor motor : leftMotors) leftTotal += motor.getPower();
+        for (DcMotor motor : rightMotors) rightTotal += motor.getPower();
+
+        totalMotors = leftMotors.size() + rightMotors.size();
+
+        average = (leftTotal + rightTotal) / totalMotors;
+
+        return average;
     }
 }
