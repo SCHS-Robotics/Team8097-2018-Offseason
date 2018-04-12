@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import java.util.ArrayList;
 
 public class TankDrive extends Drive {
@@ -17,6 +19,8 @@ public class TankDrive extends Drive {
         for (DcMotor motor : allMotors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
+
+        setDirection(rightMotors, DcMotorSimple.Direction.REVERSE);
 
         resetEncoders(allMotors);
     }

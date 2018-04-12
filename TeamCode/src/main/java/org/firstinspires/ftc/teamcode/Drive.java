@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
 
 // Simple Drive system for the two stupid FRC motors, should be adaptable for a non-mecanum/omni drive of any sort though
 public class Drive {
+
+    final float SPEED_INCREMENT = 0.05f;
 
     ArrayList<DcMotor> allMotors;
     ArrayList<DcMotor> leftMotors;
@@ -16,20 +19,14 @@ public class Drive {
     }
 
     void goForward(double targetPower) {
-        for(DcMotor motor : leftMotors) {
-            motor.setPower(targetPower);
-        }
-        for (DcMotor motor : rightMotors) {
-            motor.setPower(-targetPower);
+        for(DcMotor motor : allMotors) {
+            motor.setPower(speed(targetPower));
         }
     }
 
     void goBackward(double targetPower) {
-        for(DcMotor motor : leftMotors) {
-            motor.setPower(-targetPower);
-        }
-        for (DcMotor motor : rightMotors) {
-            motor.setPower(targetPower);
+        for(DcMotor motor : allMotors) {
+            motor.setPower(-speed(targetPower));
         }
     }
 
@@ -45,8 +42,8 @@ public class Drive {
             {
                 ratio = 0.0000000001;
             }
-            leftPower = magnitude/ratio;
-            rightPower = -magnitude;
+            leftPower = speed(magnitude)/ratio;
+            rightPower = speed(magnitude);
         }
         else if (curve > 0.0)
         {
@@ -56,13 +53,13 @@ public class Drive {
             {
                 ratio = 0.0000000001;
             }
-            leftPower = magnitude;
-            rightPower = -magnitude/ratio;
+            leftPower = speed(magnitude);
+            rightPower = speed(magnitude)/ratio;
         }
         else
         {
-            leftPower = magnitude;
-            rightPower = -magnitude;
+            leftPower = speed(magnitude);
+            rightPower = speed(magnitude);
         }
 
         for(DcMotor motor : leftMotors) {
@@ -75,14 +72,20 @@ public class Drive {
     }
 
     void turnLeft(double targetPower) {
-        for(DcMotor motor : allMotors) {
-            motor.setPower(targetPower);
+        for(DcMotor motor : leftMotors) {
+            motor.setPower(-speed(targetPower));
+        }
+        for(DcMotor motor : rightMotors) {
+            motor.setPower(speed(targetPower));
         }
     }
 
     void turnRight(double targetPower) {
-        for(DcMotor motor : allMotors) {
-            motor.setPower(-targetPower);
+        for(DcMotor motor : leftMotors) {
+            motor.setPower(speed(targetPower));
+        }
+        for(DcMotor motor : rightMotors) {
+            motor.setPower(-speed(targetPower));
         }
     }
 
@@ -96,22 +99,69 @@ public class Drive {
     }
 
     void setMode(ArrayList<DcMotor> motors, DcMotor.RunMode mode) {
-        for(DcMotor motor : motors) {
-            motor.setMode(mode);
-        }
+        for(DcMotor motor : motors) motor.setMode(mode);
+    }
+
+    void setPower(ArrayList<DcMotor> motors, double power) {
+        for (DcMotor motor : motors) motor.setPower(power);
+    }
+
+    void setTarget(ArrayList<DcMotor> motors, int targetPosition) {
+        for (DcMotor motor : motors) motor.setTargetPosition(targetPosition);
+    }
+
+    void setDirection(ArrayList<DcMotor> motors, DcMotor.Direction direction) {
+        for (DcMotor motor : motors) motor.setDirection(direction);
     }
 
     void stopMotors(ArrayList<DcMotor> motors) {
         for(DcMotor motor : motors) {
-            motor.setPower(0);
+            motor.setPower(speed(0));
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
     void stopAll() {
         for(DcMotor motor : allMotors) {
-            motor.setPower(0);
+            motor.setPower(speed(0));
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+    }
+
+    double speed(double target) {
+        double power;
+
+        if(target < 0) {
+            if (currentMeanSpeed() > target) {
+                power = currentMeanSpeed() - SPEED_INCREMENT;
+            } else if (currentMeanSpeed() < target){
+                power = currentMeanSpeed() + SPEED_INCREMENT;
+            } else {
+                power = target;
+            }
+        }
+
+        else {
+            if (currentMeanSpeed() < target) {
+                power = currentMeanSpeed() + SPEED_INCREMENT;
+            }
+            else if (currentMeanSpeed() > target){
+                power = currentMeanSpeed() - SPEED_INCREMENT;
+            } else {
+                power = target;
+            }
+        }
+
+        return power;
+    }
+
+    double currentMeanSpeed() {
+        double leftTotal = 0;
+        double rightTotal = 0;
+
+        for (DcMotor motor : leftMotors) leftTotal += motor.getPower();
+        for (DcMotor motor : rightMotors) rightTotal += motor.getPower();
+
+        return currentMeanSpeed();
     }
 }

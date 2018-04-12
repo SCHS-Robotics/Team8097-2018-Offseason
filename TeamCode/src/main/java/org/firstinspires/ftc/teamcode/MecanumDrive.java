@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import java.util.ArrayList;
 
 public class MecanumDrive extends Drive{
 
     private DcMotor motorFL, motorFR, motorBL, motorBR;
 
-    final double TICKS_PER_INCH = 100;
+    final int TICKS_PER_INCH = 100;
 
     MecanumDrive(DcMotor motorFrontLeft, DcMotor motorFrontRight, DcMotor motorBackLeft, DcMotor motorBackRight) {
         this.motorFL = motorFrontLeft;
@@ -32,91 +34,77 @@ public class MecanumDrive extends Drive{
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
+        setDirection(rightMotors, DcMotorSimple.Direction.REVERSE);
+
         resetEncoders(allMotors);
     }
 
     void strafeLeft(double power) {
-        motorBL.setPower(-power);
-        motorBR.setPower(-power);
-        motorFL.setPower(power);
-        motorFR.setPower(power);
+        motorBL.setPower(speed(power));
+        motorBR.setPower(-speed(power));
+        motorFL.setPower(-speed(power));
+        motorFR.setPower(speed(power));
     }
 
     void strafeRight(double power) {
-        motorBL.setPower(power);
-        motorBR.setPower(power);
-        motorFL.setPower(-power);
-        motorFR.setPower(-power);
+        motorBL.setPower(-speed(power));
+        motorBR.setPower(speed(power));
+        motorFL.setPower(speed(power));
+        motorFR.setPower(-speed(power));
     }
 
     void strafeForwardRight(double power) {
-        motorBL.setPower(power);
-        motorBR.setPower(0);
-        motorFL.setPower(0);
-        motorFR.setPower(-power);
+        motorBL.setPower(0);
+        motorBR.setPower(speed(power));
+        motorFL.setPower(speed(power));
+        motorFR.setPower(0);
     }
 
     void strafeForwardLeft(double power) {
-        motorBL.setPower(0);
-        motorBR.setPower(-power);
-        motorFL.setPower(power);
-        motorFR.setPower(0);
-    }
-
-    void strafeBackwardRight(double power) {
-
-        motorBL.setPower(0);
-        motorBR.setPower(power);
-        motorFL.setPower(-power);
-        motorFR.setPower(0);
-    }
-
-    void strafeBackwardLeft(double power) {
-        motorBL.setPower(-power);
+        motorBL.setPower(speed(power));
         motorBR.setPower(0);
         motorFL.setPower(0);
-        motorFR.setPower(power);
+        motorFR.setPower(speed(power));
+    }
+
+    void strafeBackwardRight(double targetPower) {
+
+        motorBL.setPower(-speed(targetPower));
+        motorBR.setPower(0);
+        motorFL.setPower(0);
+        motorFR.setPower(-speed(targetPower));
+    }
+
+    void strafeBackwardLeft(double targetPower) {
+        motorBL.setPower(0);
+        motorBR.setPower(-speed(targetPower));
+        motorFL.setPower(-speed(targetPower));
+        motorFR.setPower(0);
     }
 
 
     // Autonomous Functions
 
-    void goForwardDistance(double distance, double power) throws InterruptedException{
-        double targetPosition = -distance * TICKS_PER_INCH;
+    void goForwardDistance(int distance, double targetPower) throws InterruptedException{
+        int targetPosition = distance * TICKS_PER_INCH;
         resetEncoders(allMotors);
 
-        motorBL.setTargetPosition((int)targetPosition);
-        motorFL.setTargetPosition((int)targetPosition);
-        motorBR.setTargetPosition((int)-targetPosition);
-        motorFR.setTargetPosition((int)-targetPosition);
-
+        setTarget(allMotors, targetPosition);
         setMode(allMotors, DcMotor.RunMode.RUN_TO_POSITION);
-
-        motorBL.setPower(power);
-        motorBR.setPower(power);
-        motorFL.setPower(power);
-        motorFR.setPower(power);
+        setPower(allMotors, targetPower);
 
         while (motorBL.isBusy() && motorFR.isBusy() && motorBR.isBusy() && motorFL.isBusy()) {}
 
         stopMotors(allMotors);
     }
 
-    void goBackwardDistance(double distance, double speed) throws InterruptedException{
-        double targetPosition = -distance * TICKS_PER_INCH;
+    void goBackwardDistance(int distance, double targetPower) throws InterruptedException{
+        int targetPosition = -distance * TICKS_PER_INCH;
         resetEncoders(allMotors);
 
-        motorBL.setTargetPosition((int)-targetPosition);
-        motorFL.setTargetPosition((int)-targetPosition);
-        motorBR.setTargetPosition((int)targetPosition);
-        motorFR.setTargetPosition((int)targetPosition);
-
+        setTarget(allMotors, targetPosition);
         setMode(allMotors, DcMotor.RunMode.RUN_TO_POSITION);
-
-        motorBL.setPower(speed);
-        motorBR.setPower(speed);
-        motorFL.setPower(speed);
-        motorFR.setPower(speed);
+        setPower(allMotors, speed(targetPower));
 
         while (motorBL.isBusy() && motorFR.isBusy() && motorBR.isBusy() && motorFL.isBusy()) {}
 
