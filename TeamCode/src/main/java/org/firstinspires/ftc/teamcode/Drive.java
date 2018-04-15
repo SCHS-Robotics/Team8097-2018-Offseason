@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Drive {
 
     final float SPEED_INCREMENT = 0.05f;
+    final float SPEED_DECREMENT = 0.015f;
     final float SPEED_TOLERANCE = 0.05f;
     final float CURVE_SENSITIVITY = 0.5f;
 
@@ -32,7 +33,7 @@ public class Drive {
     }
 
     void curveDrive(double magnitude, double inputLeft, double inputRight) {
-        double curve = inputLeft - inputRight;
+        double curve = inputRight - inputLeft;
         double leftPower, rightPower;
 
         if (curve < 0.0)
@@ -43,8 +44,8 @@ public class Drive {
             {
                 ratio = 0.0000000001;
             }
-            leftPower = speed(magnitude)/ratio;
-            rightPower = speed(magnitude);
+            leftPower = magnitude/ratio;
+            rightPower = magnitude;
         }
         else if (curve > 0.0)
         {
@@ -54,8 +55,8 @@ public class Drive {
             {
                 ratio = 0.0000000001;
             }
-            leftPower = speed(magnitude);
-            rightPower = speed(magnitude)/ratio;
+            leftPower = magnitude;
+            rightPower = magnitude/ratio;
         }
         else
         {
@@ -74,19 +75,19 @@ public class Drive {
 
     void turnLeft(double targetPower) {
         for(DcMotor motor : leftMotors) {
-            motor.setPower(-speed(targetPower));
+            motor.setPower(-targetPower);
         }
         for(DcMotor motor : rightMotors) {
-            motor.setPower(speed(targetPower));
+            motor.setPower(targetPower);
         }
     }
 
     void turnRight(double targetPower) {
         for(DcMotor motor : leftMotors) {
-            motor.setPower(speed(targetPower));
+            motor.setPower(targetPower);
         }
         for(DcMotor motor : rightMotors) {
-            motor.setPower(-speed(targetPower));
+            motor.setPower(-targetPower);
         }
     }
 
@@ -136,20 +137,30 @@ public class Drive {
             if (currentMeanSpeed() > target + SPEED_TOLERANCE) {
                 power = currentMeanSpeed() - SPEED_INCREMENT;
             } else if (currentMeanSpeed() < target - SPEED_TOLERANCE){
+                power = currentMeanSpeed() + SPEED_DECREMENT;
+            } else {
+                power = target;
+            }
+        }
+
+        else if (target > 0) {
+            if (currentMeanSpeed() < target - SPEED_TOLERANCE) {
                 power = currentMeanSpeed() + SPEED_INCREMENT;
+            }
+            else if (currentMeanSpeed() > target + SPEED_TOLERANCE){
+                power = currentMeanSpeed() - SPEED_DECREMENT;
             } else {
                 power = target;
             }
         }
 
         else {
-            if (currentMeanSpeed() < target - SPEED_TOLERANCE) {
-                power = currentMeanSpeed() + SPEED_INCREMENT;
-            }
-            else if (currentMeanSpeed() > target + SPEED_TOLERANCE){
-                power = currentMeanSpeed() - SPEED_INCREMENT;
+            if (currentMeanSpeed() > 0.2) {
+                power = currentMeanSpeed() - SPEED_DECREMENT;
+            } else if (currentMeanSpeed() < -.2) {
+                power = currentMeanSpeed() + SPEED_DECREMENT;
             } else {
-                power = target;
+                power = 0;
             }
         }
 
