@@ -9,9 +9,13 @@ import java.util.ArrayList;
 public abstract class BaseOpMode extends LinearOpMode {
 
     // Declare hardware variables here
-    DcMotor motorLeft;
-    DcMotor motorRight;
+    DcMotor motorBackLeft;
+    DcMotor motorBackRight;
+    DcMotor motorFrontLeft;
+    DcMotor motorFrontRight;
+
     Drive drive;
+
     private ArrayList<DcMotor> leftMotors;
     private ArrayList<DcMotor> rightMotors;
 
@@ -21,14 +25,18 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         runtime = new ElapsedTime();
 
-        motorLeft = hardwareMap.dcMotor.get("motorLeft");
-        motorRight = hardwareMap.dcMotor.get("motorRight");
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
         leftMotors = new ArrayList<>();
         rightMotors = new ArrayList<>();
-        leftMotors.add(motorLeft);
-        rightMotors.add(motorRight);
 
+        leftMotors.add(motorBackLeft);
+        leftMotors.add(motorFrontLeft);
+        rightMotors.add(motorBackRight);
+        rightMotors.add(motorFrontRight);
 
         drive = new TankDrive(leftMotors, rightMotors);
 
