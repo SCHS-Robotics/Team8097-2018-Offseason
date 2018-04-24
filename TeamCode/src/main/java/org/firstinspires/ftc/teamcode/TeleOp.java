@@ -19,19 +19,14 @@ public class TeleOp extends BaseOpMode {
 
         runtime.reset();
 
+        tts.getTts().setLanguage(tts.langToLocale(tts.lang));
+        tts.speak(tts.welcomeText());
+
         while (opModeIsActive()) {
 
             // Telemetry
             telemetry.update();
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motor Back Left Speed: ", motorBackLeft.getPower());
-            telemetry.addData("Motor Back Right Speed: ", motorBackRight.getPower());
-            telemetry.addData("Motor Front Left Speed: ", motorFrontLeft.getPower());
-            telemetry.addData("Motor Front Right Speed: ", motorFrontRight.getPower());
-            telemetry.addData("Average Speed", drive.currentMeanSpeed());
 
-
-            // Controls checking
             if(Math.abs(gamepad1.left_stick_y) > 0) {
                 drive.curveDrive(-gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
                 telemetry.addLine("Curve driving");

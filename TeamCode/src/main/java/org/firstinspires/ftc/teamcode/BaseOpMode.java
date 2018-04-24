@@ -5,21 +5,25 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class BaseOpMode extends LinearOpMode {
 
     // Declare hardware variables here
+
+    Drive drive;
+
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
 
-    Drive drive;
-
     private ArrayList<DcMotor> leftMotors;
     private ArrayList<DcMotor> rightMotors;
 
     ElapsedTime runtime;
+
+    RobotTts tts;
 
     void initialize() {
 
@@ -39,6 +43,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         rightMotors.add(motorFrontRight);
 
         drive = new TankDrive(leftMotors, rightMotors);
+
+        tts = new RobotTts(hardwareMap.appContext);
 
         switch (type) {
             case TELEOP:
