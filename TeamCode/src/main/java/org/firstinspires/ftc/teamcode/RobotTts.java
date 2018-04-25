@@ -31,6 +31,15 @@ public class RobotTts {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
+    void setLanguage() {
+        tts.setLanguage(langToLocale(lang));
+    }
+
+    void setLanguage(Language newLanguage) {
+        lang = newLanguage;
+        tts.setLanguage(langToLocale(lang));
+    }
+
     Language randomLang() {
         int i = generator.nextInt(5);
         switch (i) {

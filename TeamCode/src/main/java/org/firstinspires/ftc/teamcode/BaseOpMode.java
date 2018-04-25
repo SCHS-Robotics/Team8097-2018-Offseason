@@ -12,11 +12,15 @@ public abstract class BaseOpMode extends LinearOpMode {
     // Declare hardware variables here
 
     Drive drive;
+    Intake intake;
 
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
+
+    DcMotor motorGrabLeft;
+    DcMotor motorGrabRight;
 
     private ArrayList<DcMotor> leftMotors;
     private ArrayList<DcMotor> rightMotors;
@@ -34,6 +38,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
+        motorBackLeft = hardwareMap.dcMotor.get("motorGrabLeft");
+        motorBackRight = hardwareMap.dcMotor.get("motorGrabRight");
+
         leftMotors = new ArrayList<>();
         rightMotors = new ArrayList<>();
 
@@ -43,6 +50,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         rightMotors.add(motorFrontRight);
 
         drive = new TankDrive(leftMotors, rightMotors);
+        intake = new Intake(motorGrabLeft, motorGrabRight);
 
         tts = new RobotTts(hardwareMap.appContext);
 

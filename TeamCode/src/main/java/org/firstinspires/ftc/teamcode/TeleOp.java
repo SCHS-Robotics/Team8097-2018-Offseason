@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import static org.firstinspires.ftc.teamcode.BaseOpMode.OpModeType.TELEOP;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOpMode", group="Linear Opmode")
 public class TeleOp extends BaseOpMode {
+
+    private ElapsedTime cooldown = new ElapsedTime();
+
+    private double buttonACooldown;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,7 +25,7 @@ public class TeleOp extends BaseOpMode {
 
         runtime.reset();
 
-        tts.getTts().setLanguage(tts.langToLocale(tts.lang));
+        tts.setLanguage();
         tts.speak(tts.welcomeText());
 
         while (opModeIsActive()) {
@@ -46,6 +52,11 @@ public class TeleOp extends BaseOpMode {
 
             else {
                 drive.stopAll();
+            }
+
+            if (gamepad1.a && Math.abs(cooldown.time() - buttonACooldown) >= .2) {
+                intake.toggle();
+                buttonACooldown = cooldown.time();
             }
 
         }
