@@ -11,17 +11,16 @@ public class Intake {
     final int MOTOR_LEFT_OPEN = 0;
     final int MOTOR_RIGHT_OPEN = 0;
     final int MOTOR_LEFT_CLOSED = 500; // TODO: Set
-    final int MOTOR_RIGHT_CLOSED = 500; // TODO: Set
+    final int MOTOR_RIGHT_CLOSED = -500; // TODO: Set
     final float MOVEMENT_SPEED = 0.6f;
 
     DcMotor leftArm;
     DcMotor rightArm;
 
     public Intake(DcMotor intakeLeft, DcMotor intakeRight) {
-        leftArm = intakeLeft;
-        rightArm = intakeRight;
+        this.leftArm = intakeLeft;
+        this.rightArm = intakeRight;
 
-        rightArm.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     void open() {

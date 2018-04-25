@@ -10,6 +10,8 @@ public class TeleOp extends BaseOpMode {
     private ElapsedTime cooldown = new ElapsedTime();
 
     private double buttonACooldown;
+    private double buttonYCooldown;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -55,7 +57,13 @@ public class TeleOp extends BaseOpMode {
             }
 
             if (gamepad1.a && Math.abs(cooldown.time() - buttonACooldown) >= .2) {
-                intake.toggle();
+                tts.speak(tts.getRandomLine());
+                buttonACooldown = cooldown.time();
+            }
+
+            if (gamepad1.y && Math.abs(cooldown.time() - buttonYCooldown) >= .2) {
+                tts.lang = tts.randomLang();
+                tts.setLanguage();
                 buttonACooldown = cooldown.time();
             }
 

@@ -19,9 +19,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
 
-    DcMotor motorGrabLeft;
-    DcMotor motorGrabRight;
-
     private ArrayList<DcMotor> leftMotors;
     private ArrayList<DcMotor> rightMotors;
 
@@ -50,8 +47,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         rightMotors.add(motorFrontRight);
 
         drive = new TankDrive(leftMotors, rightMotors);
-        intake = new Intake(motorGrabLeft, motorGrabRight);
-
         tts = new RobotTts(hardwareMap.appContext);
 
         switch (type) {

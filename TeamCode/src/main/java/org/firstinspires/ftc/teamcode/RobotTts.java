@@ -40,6 +40,28 @@ public class RobotTts {
         tts.setLanguage(langToLocale(lang));
     }
 
+    String[] randomLines(){
+        switch (lang) {
+            case JAPANESE:
+                return new String[] {"Nico Nico Nii", "Be u best"};
+            case KOREAN:
+                return new String[] {"감사합니다", "대박. 우리는 해냈다.", "오빠, 내 마음이 펄럭 거든."};
+            case CHINESE:
+                return new String[] {"我想我们已经输了", "妈妈你看接了吗", "我们想修这个机器人", "机器猫，准备摧毁羊", "四是四。十是十。十四是四十。四十是四十。四十四是四十四", "吃 葡 萄 不 吐 葡 萄 皮 ,不 吃 葡 萄 倒 吐 葡 萄 皮"};
+            case ENGLISH:
+                return new String[] {"Speed and power", "Green is my pepper", "Install Gentoo", "Be your best"};
+            case GERMAN:
+                return new String[] {"Geschwindigkeit und Kraft", "Sei dein Bestes", "Grün ist mein Pfeffer"};
+            default:
+                return null;
+        }
+    }
+
+    String getRandomLine() {
+        int i = generator.nextInt(randomLines().length);
+        return randomLines()[i];
+    }
+
     Language randomLang() {
         int i = generator.nextInt(5);
         switch (i) {
