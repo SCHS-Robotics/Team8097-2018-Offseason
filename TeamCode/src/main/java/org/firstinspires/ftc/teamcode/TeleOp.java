@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import static org.firstinspires.ftc.teamcode.BaseOpMode.OpModeType.TELEOP;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOpMode", group="Linear Opmode")
 public class TeleOp extends BaseOpMode {
+
+    private ElapsedTime cooldown = new ElapsedTime();
+
+    private double buttonACooldown, buttonYCooldown, buttonLBCoolDown, buttonRBCoolDown;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,21 +25,18 @@ public class TeleOp extends BaseOpMode {
 
         runtime.reset();
 
+        tts.setLanguage();
+        tts.speak(tts.welcomeText());
+
         while (opModeIsActive()) {
 
             // Telemetry
+            telemetry.addData("Language: ", tts.lang);
+            telemetry.addData("Heading: ", position.getHeading());
             telemetry.update();
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motor Back Left Speed: ", motorBackLeft.getPower());
-            telemetry.addData("Motor Back Right Speed: ", motorBackRight.getPower());
-            telemetry.addData("Motor Front Left Speed: ", motorFrontLeft.getPower());
-            telemetry.addData("Motor Front Right Speed: ", motorFrontRight.getPower());
-            telemetry.addData("Average Speed", drive.currentMeanSpeed());
 
-
-            // Controls checking
-            if(Math.abs(gamepad1.left_stick_y) > 0) {
-                drive.curveDrive(-gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
+            if(Math.abs(gamepad1.left_stick_y) > 0.1) {
+                drive.curveDrive(gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger, position);
                 telemetry.addLine("Curve driving");
                 telemetry.addData("Drive Speed", drive.speed(gamepad1.left_stick_y));
                 telemetry.addData("Stick Input: ", gamepad1.left_stick_y);
@@ -49,8 +52,27 @@ public class TeleOp extends BaseOpMode {
                 drive.turnRight(gamepad1.right_trigger);
             }
 
+            else if (gamepad1.left_bumper && Math.abs(cooldown.time() - buttonLBCoolDown) >= .2) {
+                drive.turnLeftFromCurrent(90, 0.75, position);
+            }
+
+            else if (gamepad1.right_bumper && Math.abs(cooldown.time() - buttonRBCoolDown) >= .2) {
+                drive.turnRightFromCurrent(90, 0.75, position);
+            }
+
             else {
                 drive.stopAll();
+            }
+
+            if (gamepad1.a && Math.abs(cooldown.time() - buttonACooldown) >= .2) {
+                tts.speak(tts.getRandomLine());
+                buttonACooldown = cooldown.time();
+            }
+
+            if (gamepad1.y && Math.abs(cooldown.time() - buttonYCooldown) >= .2) {
+                tts.lang = tts.randomLang();
+                tts.setLanguage();
+                buttonACooldown = cooldown.time();
             }
 
         }
