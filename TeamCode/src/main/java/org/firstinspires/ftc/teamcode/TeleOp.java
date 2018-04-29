@@ -9,9 +9,7 @@ public class TeleOp extends BaseOpMode {
 
     private ElapsedTime cooldown = new ElapsedTime();
 
-    private double buttonACooldown;
-    private double buttonYCooldown;
-
+    private double buttonACooldown, buttonYCooldown, buttonLBCoolDown, buttonRBCoolDown;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,10 +31,12 @@ public class TeleOp extends BaseOpMode {
         while (opModeIsActive()) {
 
             // Telemetry
+            telemetry.addData("Language: ", tts.lang);
+            telemetry.addData("Heading: ", position.getHeading());
             telemetry.update();
 
-            if(Math.abs(gamepad1.left_stick_y) > 0) {
-                drive.curveDrive(-gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
+            if(Math.abs(gamepad1.left_stick_y) > 0.1) {
+                drive.curveDrive(gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger, position);
                 telemetry.addLine("Curve driving");
                 telemetry.addData("Drive Speed", drive.speed(gamepad1.left_stick_y));
                 telemetry.addData("Stick Input: ", gamepad1.left_stick_y);
@@ -50,6 +50,14 @@ public class TeleOp extends BaseOpMode {
 
             else if (gamepad1.right_trigger > .1){
                 drive.turnRight(gamepad1.right_trigger);
+            }
+
+            else if (gamepad1.left_bumper && Math.abs(cooldown.time() - buttonLBCoolDown) >= .2) {
+                drive.turnLeftFromCurrent(90, 0.75, position);
+            }
+
+            else if (gamepad1.right_bumper && Math.abs(cooldown.time() - buttonRBCoolDown) >= .2) {
+                drive.turnRightFromCurrent(90, 0.75, position);
             }
 
             else {

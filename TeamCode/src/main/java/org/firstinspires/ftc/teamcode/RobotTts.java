@@ -114,10 +114,6 @@ public class RobotTts {
         }
     }
 
-    TextToSpeech getTts() {
-        return tts;
-    }
-
     enum Language {
         ENGLISH,
         JAPANESE,

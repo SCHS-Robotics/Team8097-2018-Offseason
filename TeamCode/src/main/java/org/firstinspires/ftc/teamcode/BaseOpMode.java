@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,42 +12,46 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // Declare hardware variables here
 
+    // Modules Declaration
     Drive drive;
-    Intake intake;
+    Position position;
+    RobotTts tts;
+
+    // Drive / Motors
 
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorFrontRight;
 
     private ArrayList<DcMotor> leftMotors;
     private ArrayList<DcMotor> rightMotors;
 
+    // Servos
+
+    // Sensors
+    BNO055IMU revImu;
+
+    // Telemetry
     ElapsedTime runtime;
 
-    RobotTts tts;
+    // Etc.
 
     void initialize() {
 
         runtime = new ElapsedTime();
 
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-
-        motorBackLeft = hardwareMap.dcMotor.get("motorGrabLeft");
-        motorBackRight = hardwareMap.dcMotor.get("motorGrabRight");
 
         leftMotors = new ArrayList<>();
         rightMotors = new ArrayList<>();
 
         leftMotors.add(motorBackLeft);
-        leftMotors.add(motorFrontLeft);
         rightMotors.add(motorBackRight);
-        rightMotors.add(motorFrontRight);
+
+        revImu = hardwareMap.get(BNO055IMU.class, "imu");
 
         drive = new TankDrive(leftMotors, rightMotors);
+        position = new Position(revImu);
         tts = new RobotTts(hardwareMap.appContext);
 
         switch (type) {
