@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class Drive {
 
-    final float SPEED_INCREMENT = 0.03f;
-    final float SPEED_DECREMENT = 0.02f;
+    final float SPEED_INCREMENT = 0.1f;
+    final float SPEED_DECREMENT = 0.1f;
     final float SPEED_TOLERANCE = 0.05f;
     final float CURVE_SENSITIVITY = 0.3f;
     final float CORRECTION_FACTOR = 0.8f;
@@ -200,9 +200,9 @@ public class Drive {
         }
 
         else {
-            if (currentMeanSpeed() > 0.2) {
+            if (currentMeanSpeed() > 0.1) {
                 power = currentMeanSpeed() - SPEED_DECREMENT;
-            } else if (currentMeanSpeed() < -.2) {
+            } else if (currentMeanSpeed() < -.1) {
                 power = currentMeanSpeed() + SPEED_DECREMENT;
             } else {
                 power = 0;

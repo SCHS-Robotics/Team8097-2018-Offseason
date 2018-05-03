@@ -21,6 +21,8 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
+    DcMotor motorFrontLeft;
+    DcMotor motorFrontRight;
 
     private ArrayList<DcMotor> leftMotors;
     private ArrayList<DcMotor> rightMotors;
@@ -41,12 +43,16 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        motorFrontLeft= hardwareMap.dcMotor.get("motorFrontLeft");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
 
         leftMotors = new ArrayList<>();
         rightMotors = new ArrayList<>();
 
         leftMotors.add(motorBackLeft);
         rightMotors.add(motorBackRight);
+        leftMotors.add(motorFrontLeft);
+        rightMotors.add(motorFrontRight);
 
         revImu = hardwareMap.get(BNO055IMU.class, "imu");
 

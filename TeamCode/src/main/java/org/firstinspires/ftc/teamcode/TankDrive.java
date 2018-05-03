@@ -20,7 +20,7 @@ public class TankDrive extends Drive {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
-        setDirection(rightMotors, DcMotorSimple.Direction.REVERSE);
+        setDirection(leftMotors, DcMotorSimple.Direction.REVERSE);
 
         resetEncoders(allMotors);
     }
