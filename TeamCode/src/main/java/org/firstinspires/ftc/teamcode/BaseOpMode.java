@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public abstract class BaseOpMode extends LinearOpMode {
 
