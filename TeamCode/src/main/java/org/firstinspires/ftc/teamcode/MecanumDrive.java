@@ -34,7 +34,7 @@ public class MecanumDrive extends Drive{
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        setDirection(rightMotors, DcMotorSimple.Direction.REVERSE);
+        setDirection(leftMotors, DcMotorSimple.Direction.REVERSE);
 
         resetEncoders(allMotors);
     }
