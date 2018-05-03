@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.speech.tts.TextToSpeech;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
 
