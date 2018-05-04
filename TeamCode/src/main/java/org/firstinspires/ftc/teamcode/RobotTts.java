@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.speech.tts.TextToSpeech;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
 
@@ -21,6 +22,7 @@ public class RobotTts {
     final String SOUND_PATH = "/sdcard/RobotSounds/";
 
     final String LAUGH_TRACK = "laugh.mp3";
+    final String LITTLE_BOXES = "boxes.mp3";
 
     Random generator = new Random();
 
@@ -44,10 +46,11 @@ public class RobotTts {
         try {
             media.setDataSource(SOUND_PATH + sound);
             media.prepare();
-        } catch (Exception IOException) {
-            media.release();
+        } catch (IOException e) {
+
         }
         media.start();
+        media.reset();
     }
 
     void toggleLoop() {
@@ -100,9 +103,60 @@ public class RobotTts {
             case ENGLISH:
                 return new String[] {
                         "Speed and power",
+                        "Be de le beep boop",
                         "Green is my pepper",
                         "Install Gentoo",
-                        "Be your best"
+                        "Be your best",
+                        "I have low self esteem",
+                        "Indeed, thus he spoke to his disciples, 'it lacks but little, " +
+                                "and this long twilight will come. Alas, how shall " +
+                                "I rescue my light to the other side.'",
+                        "I am conscious of my existence as determined in time. " +
+                                "All time-determination presupposes something persistent in perception. " +
+                                "This persistent thing, however, cannot be something in me, since my own " +
+                                "existence in time can first be determined only through this persistent thing. " +
+                                "Thus, the perception of this persistent thing is possible only through a thing " +
+                                "outside me and not through the mere representation of a thing outside me. " +
+                                "Consequently, the determination of my existence in time is possible only " +
+                                "by means of the existence of actual things that I perceive outside myself.",
+                        "The endeavor I wish to commence on is a short thesis on suffering pertaining to solidarity, " +
+                                "leading to my topic using metaphysics, epistemology and sociology. Foundations " +
+                                "of my project will begin with the blossoming of my articulation of language; " +
+                                "for while my language is feeble ambiguity will consume it. At the end of my project, " +
+                                "finalizing it with a nice bow, I wish to spread ideals of adequate articulations " +
+                                "through a paper, perhaps I may put it in the sage. Muses condemn man to frivolous " +
+                                "work and depriving attitudes: I have not yet been condemned; for it is my hope " +
+                                "through thought I may be enlightened and awoken from ineptitude. With much effort " +
+                                "I will try to propel myself forward, reading philosophy book in order to expand " +
+                                "my views; I have started reading “The Division of Labour in Society” by " +
+                                "Emile Durkheim and wish to finish my readings with “Critique of Pure Reason” by " +
+                                "Immanuel Kant. Starting with sociology I will move into some existentialism, " +
+                                "finally concluding with epistemology; one must open one’s mind towards different " +
+                                "ideals insofar as they with to share and from new ideals. My wishes are to make am " +
+                                "entertaining work, spreading new ideals and a disregard of ignorance; one may say " +
+                                "this is my purpose, yet assumptions would cloud that thought for this is my " +
+                                "punishment. One must love the punishment for it adapts one’s purpose, yet is it " +
+                                "justified for one’s to refer to this activity as punishment; through solidarity " +
+                                "one’s adaptations are justified and the whole group finds these truths to be a " +
+                                "priori cognitions.",
+                        "I'd just like to interject for a moment. What you’re referring to as Linux, is in fact, " +
+                                "GNU/Linux, or as I’ve recently taken to calling it, GNU plus Linux. Linux is " +
+                                "not an operating system unto itself, but rather another free component of a " +
+                                "fully functioning GNU system made useful by the GNU corelibs, shell utilities " +
+                                "and vital system components comprising a full OS as defined by POSIX. Many " +
+                                "computer users run a modified version of the GNU system every day, without " +
+                                "realizing it. Through a peculiar turn of events, the version of GNU which is " +
+                                "widely used today is often called “Linux”, and many of its users are not aware " +
+                                "that it is basically the GNU system, developed by the GNU Project. " +
+                                "There really is a Linux, and these people are using it, but it is just a part " +
+                                "of the system they use.Linux is the kernel: the program in the system that " +
+                                "allocates the machine’s resources to the other programs that you run. " +
+                                "The kernel is an essential part of an operating system, but useless by itself; " +
+                                "it can only function in the context of a complete operating system. Linux is " +
+                                "normally used in combination with the GNU operating system: the whole system " +
+                                "is basically GNU with Linux added, or GNU/Linux. All the so-called “Linux” " +
+                                "distributions are really distributions of GNU/Linux"
+
                 };
             case GERMAN:
                 return new String[] {
@@ -126,12 +180,7 @@ public class RobotTts {
     }
 
     Language randomLang() {
-        int i = generator.nextInt(5);
-        return chooseLang(i);
-    }
-
-    Language chooseLang(int i) {
-        i = (i > 4) ? 0 : i;
+        int i = generator.nextInt(languages.length);
         return languages[i];
     }
 

@@ -9,7 +9,7 @@ public class Drive {
     final float SPEED_INCREMENT = 0.1f;
     final float SPEED_DECREMENT = 0.1f;
     final float SPEED_TOLERANCE = 0.05f;
-    final float CURVE_SENSITIVITY = 0.15f;
+    final float CURVE_SENSITIVITY = 0.5f;
     final float CORRECTION_FACTOR = 0.5f;
 
     final int ANGLE_TOLERANCE = 5;
@@ -71,7 +71,7 @@ public class Drive {
                 straightAngleSet = true;
             }
             double correction = pidCorrection(startingAngle, position);
-            leftPower = speed(magnitude + correction);
+            leftPower = speed(magnitude);
             rightPower = speed(magnitude);
         }
 
