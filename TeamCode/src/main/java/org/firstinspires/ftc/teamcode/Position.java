@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -13,16 +14,25 @@ public class Position {
     private Orientation angles;
     private Orientation lastAngles = new Orientation();
     private float angle;
-    private BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+    private RobotLog debugLogger;
 
-    Position (BNO055IMU givenImu) {
+    Position (BNO055IMU imu, RobotLog debugLogger) {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         parameters.loggingEnabled      = false;
 
-        imu = givenImu;
-        imu.initialize(parameters);
+        this.debugLogger = debugLogger;
+        this.imu = imu;
+        this.imu.initialize(parameters);
 
+        if (this.debugLogger.loggingEnabled) {
+            this.debugLogger.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "IMU",
+                    "Initialized"
+            );
+        }
     }
 
     float getHeading() {
@@ -38,5 +48,9 @@ public class Position {
         lastAngles = angles;
 
         return angle;
+    }
+
+    void stopTracking() {
+        imu.close();
     }
 }

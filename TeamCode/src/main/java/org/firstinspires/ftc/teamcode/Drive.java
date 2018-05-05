@@ -6,13 +6,17 @@ import java.util.ArrayList;
 
 public class Drive {
 
-    final float SPEED_INCREMENT = 0.1f;
-    final float SPEED_DECREMENT = 0.1f;
-    final float SPEED_TOLERANCE = 0.05f;
-    final float CURVE_SENSITIVITY = 0.5f;
-    final float CORRECTION_FACTOR = 0.5f;
+    private final float SPEED_INCREMENT = 0.1f;
+    private final float SPEED_DECREMENT = 0.1f;
+    private final float SPEED_TOLERANCE = 0.05f;
+    private final float CURVE_SENSITIVITY = 0.5f;
+    private final float CORRECTION_FACTOR = 0.5f;
 
-    final int ANGLE_TOLERANCE = 5;
+    private final int ANGLE_TOLERANCE = 5;
+
+    private boolean straightAngleSet = false;
+
+    protected RobotLog debugLogger;
 
     ArrayList<DcMotor> allMotors;
     ArrayList<DcMotor> leftMotors;
@@ -38,7 +42,6 @@ public class Drive {
         double curve = inputRight - inputLeft;
         double leftPower, rightPower;
         float startingAngle = 0;
-        boolean straightAngleSet = false;
 
         if (curve < 0.0)
         {
@@ -212,7 +215,7 @@ public class Drive {
         return power;
     }
 
-    double pidCorrection(float startingAngle, Position position) {
+    private double pidCorrection(float startingAngle, Position position) {
         float angleDiff = position.getHeading() - startingAngle;
         float correction;
 

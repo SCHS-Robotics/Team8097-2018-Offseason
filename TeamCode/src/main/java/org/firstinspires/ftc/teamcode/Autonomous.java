@@ -7,7 +7,7 @@ import static org.firstinspires.ftc.teamcode.BaseOpMode.OpModeType.AUTONOMOUS;
 public abstract class Autonomous extends BaseOpMode {
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         type = AUTONOMOUS;
         setAutoVars();

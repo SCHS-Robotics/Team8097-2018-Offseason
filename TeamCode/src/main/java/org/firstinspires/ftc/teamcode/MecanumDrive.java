@@ -9,9 +9,10 @@ public class MecanumDrive extends Drive{
 
     private DcMotor motorFL, motorFR, motorBL, motorBR;
 
-    final int TICKS_PER_INCH = 100;
+    private final int TICKS_PER_INCH = 100;
 
-    MecanumDrive(DcMotor motorFrontLeft, DcMotor motorFrontRight, DcMotor motorBackLeft, DcMotor motorBackRight) {
+    MecanumDrive(DcMotor motorFrontLeft, DcMotor motorFrontRight, DcMotor motorBackLeft, DcMotor motorBackRight, RobotLog debugLogger) {
+        super.debugLogger = debugLogger;
         this.motorFL = motorFrontLeft;
         this.motorFR = motorFrontRight;
         this.motorBL = motorBackLeft;
@@ -37,6 +38,14 @@ public class MecanumDrive extends Drive{
         setDirection(leftMotors, DcMotorSimple.Direction.REVERSE);
 
         resetEncoders(allMotors);
+
+        if (this.debugLogger.loggingEnabled) {
+            this.debugLogger.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "Mecanum Drive",
+                    "Initialized"
+            );
+        }
     }
 
     void strafeLeft(double power) {
@@ -93,7 +102,9 @@ public class MecanumDrive extends Drive{
         setMode(allMotors, DcMotor.RunMode.RUN_TO_POSITION);
         setPower(allMotors, targetPower);
 
-        while (motorBL.isBusy() && motorFR.isBusy() && motorBR.isBusy() && motorFL.isBusy()) {}
+        while (motorBL.isBusy() && motorFR.isBusy() && motorBR.isBusy() && motorFL.isBusy()) {
+            Thread.sleep(1);
+        }
 
         stopMotors(allMotors);
     }
@@ -106,7 +117,9 @@ public class MecanumDrive extends Drive{
         setMode(allMotors, DcMotor.RunMode.RUN_TO_POSITION);
         setPower(allMotors, speed(targetPower));
 
-        while (motorBL.isBusy() && motorFR.isBusy() && motorBR.isBusy() && motorFL.isBusy()) {}
+        while (motorBL.isBusy() && motorFR.isBusy() && motorBR.isBusy() && motorFL.isBusy()) {
+            Thread.sleep(1);
+        }
 
         stopMotors(allMotors);
     }
