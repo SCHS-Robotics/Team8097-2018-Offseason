@@ -14,7 +14,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     //----------------------------------------------------------------------------------------------
 
     // Logging
-    boolean loggingEnabled;
+    boolean loggingEnabled; // This is set on a per-OpMode basis.
 
     RobotLog languageData;
     RobotLog robotDebug;
@@ -22,7 +22,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     private  ArrayList<RobotLog> loggers;
 
     // Drive / Motors
-    boolean driveEnabled = false;
+    boolean driveEnabled = true;
 
     Drive drive;
 
@@ -37,7 +37,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     // Servos / Auxiliary
 
     // Sensors
-    boolean imuEnabled;
+    boolean imuEnabled = true;
 
     Position position;
 
@@ -96,6 +96,11 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     void shutdown() {
         if (loggingEnabled && loggers.size() > 0) {
+            robotDebug.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "OpMode",
+                    "Shutting Down"
+            );
             for (RobotLog logger : loggers) {
                 logger.closeLog();
             }

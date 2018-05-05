@@ -97,8 +97,7 @@ public class TeleOp extends BaseOpMode {
             // Telemetry
             if (outreachMode) telemetry.addLine("Outreach Mode Enabled");
             telemetry.addData("Language: ", tts.lang);
-//            telemetry.addData("Heading: ", position.getHeading());
-            telemetry.addData("Debug file location: ", robotDebug.logFileName());
+            telemetry.addData("Heading: ", position.getHeading());
             languageData.addData(1, tts.lang);
 
             telemetry.update();
@@ -106,27 +105,27 @@ public class TeleOp extends BaseOpMode {
 
             if (Math.abs(gamepad1.left_stick_y) > 0.1) {
                 double speed = outreachMode ? gamepad1.left_stick_y / 2 : gamepad1.left_stick_y;
-//                drive.curveDrive(speed, gamepad1.left_trigger, gamepad1.right_trigger, position);
+                drive.curveDrive(speed, gamepad1.left_trigger, gamepad1.right_trigger, position);
             }
             else if (gamepad1.left_trigger > .1){
                 double speed = outreachMode ? gamepad1.left_trigger / 2 : gamepad1.left_trigger;
-//                drive.turnLeft(speed);
+                drive.turnLeft(speed);
             }
             else if (gamepad1.right_trigger > .1){
                 double speed = outreachMode ? gamepad1.right_trigger / 2 : gamepad1.right_trigger;
-//                drive.turnRight(speed);
+                drive.turnRight(speed);
             }
             else if ((gamepad1.left_bumper) && Math.abs(cooldown.time() - buttonLBCooldown) >= .2) {
-//                drive.turnLeftFromCurrent(90, 0.5, position);
+                drive.turnLeftFromCurrent(90, 0.5, position);
                 buttonLBCooldown = cooldown.time();
             }
             else if ((gamepad1.right_bumper) && Math.abs(cooldown.time() - buttonRBCooldown) >= .2) {
-//                drive.turnRightFromCurrent(90, 0.5, position);
+                drive.turnRightFromCurrent(90, 0.5, position);
                 buttonRBCooldown = cooldown.time();
             }
 
             else {
-//                drive.stopAll();
+                drive.stopAll();
             }
 
             if ((gamepad1.a || gamepad2.a) && Math.abs(cooldown.time() - buttonACooldown) >= .2) {
@@ -151,11 +150,16 @@ public class TeleOp extends BaseOpMode {
             }
 
             if (isStopRequested()) {
+                if (loggingEnabled) {
+                    robotDebug.addDbgMessage(
+                            RobotLog.DbgLevel.INFO,
+                            "OpMode",
+                            "---------- Stopping TeleOp ----------"
+                    );
+                }
                 shutdown();
-                requestOpModeStop();
             }
         }
-
         shutdown();
     }
 
