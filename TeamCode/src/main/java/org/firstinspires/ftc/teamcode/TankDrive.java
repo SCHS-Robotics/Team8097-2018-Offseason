@@ -7,7 +7,10 @@ import java.util.ArrayList;
 
 public class TankDrive extends Drive {
 
-    TankDrive(ArrayList<DcMotor> leftMotors, ArrayList<DcMotor> rightMotors) {
+    TankDrive(ArrayList<DcMotor> leftMotors, ArrayList<DcMotor> rightMotors, RobotLog debugLogger) {
+
+        super.debugLogger = debugLogger;
+
         this.leftMotors = leftMotors;
         this.rightMotors = rightMotors;
 
@@ -23,5 +26,14 @@ public class TankDrive extends Drive {
         setDirection(leftMotors, DcMotorSimple.Direction.REVERSE);
 
         resetEncoders(allMotors);
+
+        if (this.debugLogger.loggingEnabled) {
+            this.debugLogger.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "Tank Drive",
+                    "Initialized"
+            );
+        }
+
     }
 }

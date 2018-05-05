@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.speech.tts.TextToSpeech;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
@@ -24,6 +26,9 @@ public class RobotTts {
     final String LAUGH_TRACK = "laugh.mp3";
     final String LITTLE_BOXES = "boxes.mp3";
 
+    private RobotLog debugLogger;
+    private ElapsedTime time;
+
     Random generator = new Random();
 
     Language[] languages = new Language[] {
@@ -34,23 +39,38 @@ public class RobotTts {
             CHINESE
     };
 
-    RobotTts(Context context) {
+    RobotTts(Context context, ElapsedTime time, RobotLog debugLogger) {
         tts = new TextToSpeech(context, null);
         media = new MediaPlayer();
         media.setLooping(false);
         tts.setPitch(1.5f);
         tts.setSpeechRate(1.5f);
+        this.time = time;
+        this.debugLogger = debugLogger;
+        if (this.debugLogger.loggingEnabled) {
+            this.debugLogger.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "TTS",
+                    "Initialized"
+            );
+        }
     }
 
     void playSound(String sound) {
+        if (media.isPlaying()) media.stop();
         try {
             media.setDataSource(SOUND_PATH + sound);
             media.prepare();
         } catch (IOException e) {
-
+            if (debugLogger.loggingEnabled) {
+                debugLogger.addDbgMessage(
+                        RobotLog.DbgLevel.ERROR,
+                        "TTS.playSound",
+                        "File " + SOUND_PATH + "Not Found"
+                );
+            }
         }
         media.start();
-        media.reset();
     }
 
     void toggleLoop() {
@@ -67,15 +87,41 @@ public class RobotTts {
 
     void speak(String text) {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        if (debugLogger.isLoggingEnabled()) {
+            debugLogger.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "TTS",
+                    text
+            );
+        }
     }
 
     void setLanguage() {
         tts.setLanguage(langToLocale(lang));
+
+        if (debugLogger.isLoggingEnabled()) {
+            debugLogger.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "TTS",
+                    "Language set to " + lang
+            );
+        }
     }
 
     void setLanguage(Language newLanguage) {
         lang = newLanguage;
         tts.setLanguage(langToLocale(lang));
+        if (debugLogger.isLoggingEnabled()) {
+            debugLogger.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "TTS",
+                    "Language set to " + lang
+            );
+        }
+    }
+
+    void stopTalking() {
+        tts.stop();
     }
 
     String[] randomLines(){
@@ -174,17 +220,12 @@ public class RobotTts {
         return randomLines()[i];
     }
 
-    String getRandomLine(String[] collection) {
-        int i = generator.nextInt(collection.length);
-        return collection[i];
-    }
-
     Language randomLang() {
         int i = generator.nextInt(languages.length);
         return languages[i];
     }
 
-    Locale langToLocale(Language language) {
+    private Locale langToLocale(Language language) {
         switch (language) {
             case JAPANESE:
                 return Locale.JAPAN;
@@ -227,4 +268,5 @@ public class RobotTts {
     }
 
     Language lang;
+    Language lastLang;
 }
