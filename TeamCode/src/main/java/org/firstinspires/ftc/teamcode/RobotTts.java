@@ -7,6 +7,7 @@ import android.speech.tts.TextToSpeech;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.IOException;
+import java.util.EventListener;
 import java.util.Locale;
 import java.util.Random;
 
@@ -20,6 +21,7 @@ public class RobotTts {
 
     MediaPlayer media;
     TextToSpeech tts;
+    MediaPlayer.OnCompletionListener onCompletionListener;
 
     final String SOUND_PATH = "/sdcard/RobotSounds/";
 
@@ -56,11 +58,12 @@ public class RobotTts {
         }
     }
 
-    void playSound(String sound) {
+    void readySound(String sound) {
         if (media.isPlaying()) media.stop();
         try {
             media.setDataSource(SOUND_PATH + sound);
-            media.prepare();
+            media.prepareAsync();
+
         } catch (IOException e) {
             if (debugLogger.loggingEnabled) {
                 debugLogger.addDbgMessage(
@@ -70,6 +73,9 @@ public class RobotTts {
                 );
             }
         }
+    }
+
+    void playSound() {
         media.start();
     }
 

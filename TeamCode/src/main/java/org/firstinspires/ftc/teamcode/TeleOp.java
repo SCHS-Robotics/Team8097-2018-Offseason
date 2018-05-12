@@ -145,7 +145,8 @@ public class TeleOp extends BaseOpMode {
             }
 
             if (gamepad1.x && Math.abs(cooldown.time() - buttonXCooldown) >= .2) {
-                tts.playSound(tts.LITTLE_BOXES);
+                tts.readySound(tts.LITTLE_BOXES);
+                tts.playSound();
                 buttonXCooldown = cooldown.time();
             }
 
