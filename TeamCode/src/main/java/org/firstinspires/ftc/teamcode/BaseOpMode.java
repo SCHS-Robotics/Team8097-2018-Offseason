@@ -16,10 +16,11 @@ public abstract class BaseOpMode extends LinearOpMode {
     // Logging
     boolean loggingEnabled; // This is set on a per-OpMode basis.
 
-    RobotLog languageData;
+    RobotLog speedData;
     RobotLog robotDebug;
 
-    private  ArrayList<RobotLog> loggers;
+    private ArrayList<RobotLog> loggers;
+    private ArrayList<Module> modules;
 
     // Drive / Motors
     boolean driveEnabled = true;
@@ -51,6 +52,10 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     RobotTts tts;
 
+    //----------------------------------------------------------------------------------------------
+    // Common Functions
+    //----------------------------------------------------------------------------------------------
+
     void initialize() {
 
         if (driveEnabled) {
@@ -69,21 +74,93 @@ public abstract class BaseOpMode extends LinearOpMode {
             rightMotors.add(motorFrontRight);
 
             drive = new TankDrive(leftMotors, rightMotors, robotDebug);
+
+            boolean motorMissing = false;
+            for (int i = 0; i < leftMotors.size(); i++) {
+                if (leftMotors.get(i) == null) {
+                    if (loggingEnabled) {
+                        robotDebug.addDbgMessage(
+                                RobotLog.DbgLevel.ERROR,
+                                drive.moduleName,
+                                "Left motor of index " + i + " not found!"
+                        );
+                    }
+                    motorMissing = true;
+                    // Kills the drive train if a motor is not found
+                    position.disableModule();
+                }
+            }
+            for (int i = 0; i < rightMotors.size(); i++) {
+                if (rightMotors.get(i) == null) {
+                    if (loggingEnabled) {
+                        robotDebug.addDbgMessage(
+                                RobotLog.DbgLevel.ERROR,
+                                drive.moduleName,
+                                "Right motor of index " + i + " not found!"
+                        );
+                    }
+                    motorMissing = true;
+                    position.disableModule();
+                }
+            }
+            if (!motorMissing) {
+                modules.add(position);
+            }
+        } else {
+            drive = new Drive();
+            if (loggingEnabled) {
+                robotDebug.addDbgMessage(
+                        RobotLog.DbgLevel.INFO,
+                        drive.moduleName,
+                        "Disabled"
+                );
+            }
         }
 
         if (loggingEnabled) {
             loggers = new ArrayList<>();
-            loggers.add(languageData);
+            loggers.add(speedData);
             loggers.add(robotDebug);
         }
 
         if (imuEnabled) {
             revImu = hardwareMap.get(BNO055IMU.class, "imu");
             position = new Position(revImu, robotDebug);
+            if (revImu == null) {
+                if (loggingEnabled) {
+                    robotDebug.addDbgMessage(
+                            RobotLog.DbgLevel.ERROR,
+                            position.moduleName,
+                            "Not Found"
+                    );
+                }
+                position.disableModule();
+            } else {
+                modules.add(position);
+            }
+        } else {
+            position = new Position();
+            if (loggingEnabled) {
+                robotDebug.addDbgMessage(
+                        RobotLog.DbgLevel.INFO,
+                        position.moduleName,
+                        "Disabled"
+                );
+            }
         }
 
         if (ttsEnabled) {
             tts = new RobotTts(hardwareMap.appContext, runtime, robotDebug);
+            modules.add(tts);
+        } else {
+            tts = new RobotTts();
+            if (loggingEnabled) {
+                robotDebug.addDbgMessage(
+                        RobotLog.DbgLevel.INFO,
+                        tts.moduleName,
+                        "Disabled"
+                );
+            }
         }
 
         switch (type) {

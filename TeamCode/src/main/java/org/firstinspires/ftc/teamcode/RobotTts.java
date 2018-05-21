@@ -17,11 +17,11 @@ import static org.firstinspires.ftc.teamcode.RobotTts.Language.GERMAN;
 import static org.firstinspires.ftc.teamcode.RobotTts.Language.JAPANESE;
 import static org.firstinspires.ftc.teamcode.RobotTts.Language.KOREAN;
 
-public class RobotTts {
+public class RobotTts extends Module{
 
+    private boolean enabled = true;
     MediaPlayer media;
     TextToSpeech tts;
-    MediaPlayer.OnCompletionListener onCompletionListener;
 
     final String SOUND_PATH = "/sdcard/RobotSounds/";
 
@@ -58,76 +58,98 @@ public class RobotTts {
         }
     }
 
-    void readySound(String sound) {
-        if (media.isPlaying()) media.stop();
-        try {
-            media.setDataSource(SOUND_PATH + sound);
-            media.prepareAsync();
+    RobotTts() {
+        this.enabled = false;
+    }
 
-        } catch (IOException e) {
-            if (debugLogger.loggingEnabled) {
-                debugLogger.addDbgMessage(
-                        RobotLog.DbgLevel.ERROR,
-                        "TTS.playSound",
-                        "File " + SOUND_PATH + "Not Found"
-                );
+    void readySound(String sound) {
+        if (this.enabled) {
+            if (media.isPlaying()) media.stop();
+            try {
+                media.setDataSource(SOUND_PATH + sound);
+                media.prepareAsync();
+
+            } catch (IOException e) {
+                if (debugLogger.loggingEnabled) {
+                    debugLogger.addDbgMessage(
+                            RobotLog.DbgLevel.ERROR,
+                            "TTS.playSound",
+                            "File " + SOUND_PATH + "Not Found"
+                    );
+                }
             }
         }
     }
 
     void playSound() {
-        media.start();
+        if (this.enabled) {
+            media.start();
+        }
     }
 
     void toggleLoop() {
-        media.setLooping(!media.isLooping());
+        if (this.enabled) {
+            media.setLooping(!media.isLooping());
+        }
     }
 
     public void pauseSound() {
-        if (media.isPlaying()) media.pause();
+        if (this.enabled) {
+            if (media.isPlaying()) media.pause();
+        }
     }
 
     public void stopSound() {
-        if (media.isPlaying()) media.stop();
+        if (this.enabled) {
+            if (media.isPlaying()) media.stop();
+        }
     }
 
     void speak(String text) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-        if (debugLogger.isLoggingEnabled()) {
-            debugLogger.addDbgMessage(
-                    RobotLog.DbgLevel.INFO,
-                    "TTS",
-                    text
-            );
+        if (this.enabled) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            if (debugLogger.isLoggingEnabled()) {
+                debugLogger.addDbgMessage(
+                        RobotLog.DbgLevel.INFO,
+                        "TTS",
+                        text
+                );
+            }
         }
     }
 
     void setLanguage() {
-        tts.setLanguage(langToLocale(lang));
+        if (this.enabled) {
+            tts.setLanguage(langToLocale(lang));
 
-        if (debugLogger.isLoggingEnabled()) {
-            debugLogger.addDbgMessage(
-                    RobotLog.DbgLevel.INFO,
-                    "TTS",
-                    "Language set to " + lang
-            );
+            if (debugLogger.isLoggingEnabled()) {
+                debugLogger.addDbgMessage(
+                        RobotLog.DbgLevel.INFO,
+                        "TTS",
+                        "Language set to " + lang
+                );
+            }
         }
     }
 
     void setLanguage(Language newLanguage) {
-        lang = newLanguage;
-        tts.setLanguage(langToLocale(lang));
-        if (debugLogger.isLoggingEnabled()) {
-            debugLogger.addDbgMessage(
-                    RobotLog.DbgLevel.INFO,
-                    "TTS",
-                    "Language set to " + lang
-            );
+        if (this.enabled) {
+            lang = newLanguage;
+            tts.setLanguage(langToLocale(lang));
+            if (debugLogger.isLoggingEnabled()) {
+                debugLogger.addDbgMessage(
+                        RobotLog.DbgLevel.INFO,
+                        "TTS",
+                        "Language set to " + lang
+                );
+            }
         }
     }
 
     void stopTalking() {
-        tts.stop();
+        if (this.enabled) {
+            tts.stop();
+        }
     }
 
     String[] randomLines(){
@@ -274,5 +296,4 @@ public class RobotTts {
     }
 
     Language lang;
-    Language lastLang;
 }

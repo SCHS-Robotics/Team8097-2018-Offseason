@@ -18,6 +18,20 @@ public abstract class Autonomous extends BaseOpMode {
         telemetry.update();
 
         waitForStart();
+
+        if (loggingEnabled) {
+            robotDebug.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "OpMode",
+                    "---------- Starting Autonomous ----------"
+            );
+            robotDebug.addDbgMessage(
+                    RobotLog.DbgLevel.INFO,
+                    "OpMode",
+                    "TEAM: " + team
+            );
+        }
+
         runtime.reset();
 
         while(opModeIsActive()) {

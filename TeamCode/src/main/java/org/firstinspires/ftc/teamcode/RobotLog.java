@@ -14,7 +14,6 @@ import java.util.Locale;
 public class RobotLog {
 
     private PrintStream log = null;
-
     private LogType type;
 
     boolean loggingEnabled;

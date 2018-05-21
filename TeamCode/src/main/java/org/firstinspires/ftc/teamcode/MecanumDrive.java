@@ -17,6 +17,7 @@ public class MecanumDrive extends Drive{
         this.motorFR = motorFrontRight;
         this.motorBL = motorBackLeft;
         this.motorBR = motorBackRight;
+        this.moduleName = "Mecanum Drive";
 
         leftMotors = new ArrayList<>();
         rightMotors = new ArrayList<>();
@@ -42,7 +43,7 @@ public class MecanumDrive extends Drive{
         if (this.debugLogger.loggingEnabled) {
             this.debugLogger.addDbgMessage(
                     RobotLog.DbgLevel.INFO,
-                    "Mecanum Drive",
+                    moduleName,
                     "Initialized"
             );
         }

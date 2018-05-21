@@ -9,10 +9,10 @@ public class TankDrive extends Drive {
 
     TankDrive(ArrayList<DcMotor> leftMotors, ArrayList<DcMotor> rightMotors, RobotLog debugLogger) {
 
-        super.debugLogger = debugLogger;
-
+        this.debugLogger = debugLogger;
         this.leftMotors = leftMotors;
         this.rightMotors = rightMotors;
+        this.moduleName = "Tank Drive";
 
         allMotors = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class TankDrive extends Drive {
         if (this.debugLogger.loggingEnabled) {
             this.debugLogger.addDbgMessage(
                     RobotLog.DbgLevel.INFO,
-                    "Tank Drive",
+                    moduleName,
                     "Initialized"
             );
         }
