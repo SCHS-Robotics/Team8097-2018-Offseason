@@ -16,21 +16,19 @@ public abstract class BaseOpMode extends LinearOpMode {
     // Logging
     boolean loggingEnabled; // This is set on a per-OpMode basis.
 
-    RobotLog speedData;
+    RobotLog accelData;
     RobotLog robotDebug;
 
-    private ArrayList<RobotLog> loggers;
-    private ArrayList<Module> modules;
+    ArrayList<RobotLog> loggers;
+    ArrayList<Module> modules;
 
     // Drive / Motors
     boolean driveEnabled = true;
 
     Drive drive;
 
-    DcMotor motorBackLeft;
-    DcMotor motorBackRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorFrontRight;
+    DcMotor motorLeft;
+    DcMotor motorRight;
 
     private ArrayList<DcMotor> leftMotors;
     private ArrayList<DcMotor> rightMotors;
@@ -58,24 +56,21 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     void initialize() {
 
+        modules = new ArrayList<>();
+
         if (driveEnabled) {
-            motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-            motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-            motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-            motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+            motorLeft = hardwareMap.dcMotor.get("motorLeft");
+            motorRight = hardwareMap.dcMotor.get("motorRight");
 
 
             leftMotors = new ArrayList<>();
             rightMotors = new ArrayList<>();
 
-            leftMotors.add(motorBackLeft);
-            rightMotors.add(motorBackRight);
-            leftMotors.add(motorFrontLeft);
-            rightMotors.add(motorFrontRight);
+            leftMotors.add(motorLeft);
+            rightMotors.add(motorRight);
 
             drive = new TankDrive(leftMotors, rightMotors, robotDebug);
 
-            boolean motorMissing = false;
             for (int i = 0; i < leftMotors.size(); i++) {
                 if (leftMotors.get(i) == null) {
                     if (loggingEnabled) {
@@ -85,9 +80,8 @@ public abstract class BaseOpMode extends LinearOpMode {
                                 "Left motor of index " + i + " not found!"
                         );
                     }
-                    motorMissing = true;
-                    // Kills the drive train if a motor is not found
-                    position.disableModule();
+                    leftMotors.remove(i);
+                    rightMotors.remove(i);
                 }
             }
             for (int i = 0; i < rightMotors.size(); i++) {
@@ -99,13 +93,11 @@ public abstract class BaseOpMode extends LinearOpMode {
                                 "Right motor of index " + i + " not found!"
                         );
                     }
-                    motorMissing = true;
-                    position.disableModule();
+                    rightMotors.remove(i);
+                    leftMotors.remove(i);
                 }
             }
-            if (!motorMissing) {
-                modules.add(position);
-            }
+
         } else {
             drive = new Drive();
             if (loggingEnabled) {
@@ -119,7 +111,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         if (loggingEnabled) {
             loggers = new ArrayList<>();
-            loggers.add(speedData);
+            loggers.add(accelData);
             loggers.add(robotDebug);
         }
 

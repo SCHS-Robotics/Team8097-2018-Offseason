@@ -13,6 +13,7 @@ public class TankDrive extends Drive {
         this.leftMotors = leftMotors;
         this.rightMotors = rightMotors;
         this.moduleName = "Tank Drive";
+        this.enabled = true;
 
         allMotors = new ArrayList<>();
 
